@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    class Program
+    public enum TileState
     {
-        static void Main(string[] args)
-        {
-
-        }
+        Hit = 1,
+        NotHit = 0
     }
 }

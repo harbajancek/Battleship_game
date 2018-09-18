@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    class Program
+    public enum Direction
     {
-        static void Main(string[] args)
-        {
-
-        }
+        North = 0,
+        East = 1,
+        South = 2,
+        West = 3
     }
 }

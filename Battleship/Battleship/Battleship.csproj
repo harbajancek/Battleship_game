@@ -43,8 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Direction.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="Point.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ship.cs" />
+    <Compile Include="ShipSize.cs" />
+    <Compile Include="ShipState.cs" />
+    <Compile Include="Tile.cs" />
+    <Compile Include="TileState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

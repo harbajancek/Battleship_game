@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    class Program
+    public enum ShipClass
     {
-        static void Main(string[] args)
-        {
-
-        }
+        Carrier = 1,
+        Battleship = 2,
+        Cruiser = 3,
+        Submarine = 4,
+        Destroyer = 5
     }
 }

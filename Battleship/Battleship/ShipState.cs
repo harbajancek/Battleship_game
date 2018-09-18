@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    class Program
+    public enum ShipState
     {
-        static void Main(string[] args)
-        {
-
-        }
+        Sunk = 1,
+        NotSunk = 0
     }
 }

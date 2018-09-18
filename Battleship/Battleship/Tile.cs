@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    class Program
+    class Tile
     {
-        static void Main(string[] args)
-        {
-
-        }
+        public Point Point;
+        public Ship Ship;
+        public TileState TileState;
     }
 }

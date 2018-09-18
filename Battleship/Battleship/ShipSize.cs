@@ -12,6 +12,8 @@ namespace Battleship
         Battleship = 2,
         Cruiser = 3,
         Submarine = 4,
-        Destroyer = 5
+        Destroyer = 5,
+        Hydroplane = 6,
+        HeavyCruiser = 7
     }
 }

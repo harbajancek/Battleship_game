@@ -10,7 +10,7 @@ namespace Battleship
     {
         public readonly ShipClass shipClass;
         public readonly Direction direction;
-        public readonly ShipState shipState;
+        public readonly ShipState shipState = ShipState.NotSunk;
         public Point Point;
 
         public Ship(ShipClass shipClass, Point point, Direction direction = Direction.North)

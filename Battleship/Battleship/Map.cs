@@ -8,123 +8,47 @@ namespace Battleship
 {
     class Map
     {
-        public readonly int width;
-        public readonly int height;
-        public readonly byte[,] MapTiles;
+        public readonly MapSize mapSize;
+        public readonly List<Tile> MapTiles;
 
-        public Map(int inWidth, int inHeight)
+        public Map(MapSize mapSize)
         {
-            width = inWidth;
-            height = inHeight;
-            MapTiles = new byte[width, height];
+            createMap(mapSize);
         }
 
-        public bool AddShip(Ship ship)
+        private void createMap(MapSize mapSize)
         {
-
-            /*
-            int posOne;
-            int posTwo;
-
-            posOne = ship.IsHorizontal ? posX : posY;
-            posTwo = ship.IsHorizontal ? posY : posX;
-
-            for (int i = posOne; i < posOne + (int)ship.shipClass; i++)
+            int tempY;
+            int tempX;
+            switch (mapSize)
             {
-                if (!checkPointForNeighbours(i, posTwo))
+                case MapSize.Small:
+                    tempX = 10;
+                    tempY = 10;
+                    break;
+                case MapSize.Medium:
+                    tempX = 20;
+                    tempY = 20;
+                    break;
+                case MapSize.Big:
+                    tempX = 30;
+                    tempY = 30;
+                    break;
+                default:
+                    return;
+            }
+
+            for (int i = 0; i < tempY; i++)
+            {
+                for (int z = 0; z < tempX; z++)
                 {
-                    return false;
+                    Point tempPoint = new Point();
+                    tempPoint.X = z;
+                    tempPoint.Y = i;
+                    Tile tempTile = Tile.NewTile(tempPoint);
+                    MapTiles.Add(tempTile);
                 }
             }
-
-            if (ship.IsHorizontal)
-            {
-                for (int i = posY; i < posX + (int)ship.shipClass; i++)
-                {
-                    MapPoints[posX, i] = 1;
-                }
-            }
-            else
-            {
-                for (int i = posX; i < posY + (int)ship.shipClass; i++)
-                {
-                    MapPoints[i, posY] = 1;
-                }
-            }
-
-            return true;
-            */
-        }
-
-        private bool checkPointForNeighbours(int x, int y)
-        {
-            byte temp;
-            if (!returnPointType(out temp, x, y) || temp == 1)
-            {
-                return false;
-            }
-
-            int[][] values = new int[9][]
-            {
-                new int[] {x-1, y-1},
-                new int[] {x, y-1},
-                new int[] {x+1, y-1},
-
-                new int[] {x-1, y},
-                new int[] {x, y},
-                new int[] {x+1, y},
-
-                new int[] {x-1, y+1},
-                new int[] {x, y+1},
-                new int[] {x+1, y+1},
-            };
-
-            foreach (var item in values)
-            {
-                if (!returnPointType(out temp, item[0], item[1]) && temp == 1)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-        private bool returnPointType(out byte pointType, int x, int y)
-        {
-            try
-            {
-                pointType = MapTiles[x, y];
-            }
-            catch
-            {
-                pointType = 0;
-                return false;
-            }
-            return true;
-        }
-
-        public bool GetPointPos(out int posX, out int posY, int arrayPosition)
-        {
-            posY = 0;
-            posX = 0;
-
-            if (width * height + width > arrayPosition)
-            {
-                return false;
-            }
-
-            for (; posY < height; posY++)
-            {
-                for (; posX < width; posX++)
-                {
-                    if (posY * posX + posX == arrayPosition)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
     }
 }

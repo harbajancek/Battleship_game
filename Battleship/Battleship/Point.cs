@@ -8,9 +8,7 @@ namespace Battleship
 {
     class Point
     {
-        private int x;
-        public int X { get => x; set { if (value >= 0) { x = value; } } }
-        private int y;
-        public int Y { get => y; set { if (value >= 0) { y = value; } } }
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 }

@@ -8,19 +8,25 @@ namespace Battleship
 {
     class Tile
     {
-        public Point Point;
-        public Ship Ship;
-        public TileState TileState;
-
-        public static Tile NewTile(Point point, TileState tileState = TileState.NotHit, Ship ship = null)
+        public readonly Point Position = new Point();
+        public Ship Ship = null;
+        private TileStatus status;
+        public TileStatus Status
         {
-            Tile tile = new Tile();
+            get { return status; }
+        }
 
-            tile.Point = point;
-            tile.Ship = ship;
-            tile.TileState = tileState;
+        public Tile(int x, int y)
+        {
+            Position.X = x;
+            Position.Y = y;
+            status = TileStatus.NotHit;
+        }
 
-            return tile;
+
+        public void Hit()
+        {
+            status = TileStatus.Hit;
         }
     }
 }

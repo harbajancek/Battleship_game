@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    public enum TileState
+    enum ShipDirection
     {
-        Hit = 1,
-        NotHit = 0
+        North = 1,
+        East = 2,
+        South = 3,
+        West = 4
     }
 }

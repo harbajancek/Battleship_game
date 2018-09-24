@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    public enum MapSize
+    class MapSize
     {
-        Small = 0,
-        Medium = 1,
-        Big = 3
+        public readonly int height;
+        public readonly int width;
+        public MapSize(int width, int height)
+        {
+            this.height = height;
+            this.width = width;
+        }
     }
 }

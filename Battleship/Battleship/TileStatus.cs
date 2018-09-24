@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    public enum ShipState
+    enum TileStatus
     {
-        Sunk = 1,
-        NotSunk = 0
+        NotHit = 0,
+        Hit = 1
     }
 }

@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    class ShipsPositionList
+    enum ShipDirection
     {
+        North = 1,
+        East,
+        South,
+        West
     }
 }

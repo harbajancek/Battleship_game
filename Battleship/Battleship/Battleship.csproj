@@ -43,20 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="enumy\MapDirection.cs" />
     <Compile Include="MapSize.cs" />
     <Compile Include="PointFactory.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ship.cs" />
-    <Compile Include="ShipClass.cs" />
-    <Compile Include="ShipDirection.cs" />
+    <Compile Include="enumy\ShipClass.cs" />
+    <Compile Include="enumy\ShipDirection.cs" />
     <Compile Include="ShipFunctions.cs" />
-    <Compile Include="ShipsPositionList.cs" />
-    <Compile Include="ShipStatus.cs" />
+    <Compile Include="ShipsPosition.cs" />
+    <Compile Include="enumy\ShipStatus.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileMap.cs" />
-    <Compile Include="TileStatus.cs" />
+    <Compile Include="enumy\TileStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

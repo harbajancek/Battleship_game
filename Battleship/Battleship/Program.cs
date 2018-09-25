@@ -15,11 +15,13 @@ namespace Battleship
             MapSize size = new MapSize(width, height);
             TileMap Map1 = new TileMap(size);
 
-            Ship ship = new Ship(ShipClass.Hydroplane);
-            Ship ship2 = new Ship(ShipClass.Carrier);
+            Ship ship = new Ship(ShipClass.Hydroplane, ShipDirection.South);
 
-            Map1.AddShip(ship, 55);
-            Map1.AddShip(ship2, 54);
+
+            Point tempPoint = new Point();
+            tempPoint.X = 1;
+            tempPoint.Y = 0;
+            Map1.AddShip(ship, tempPoint);
 
             Map1.DisplayMap();
             Console.WriteLine();

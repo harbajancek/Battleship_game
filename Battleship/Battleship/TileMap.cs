@@ -8,25 +8,139 @@ namespace Battleship
 {
     class TileMap
     {
-        public readonly ;
+        public readonly List<ShipsPosition> ShipPositions = new List<ShipsPosition>();
         public readonly List<Tile> Tiles = new List<Tile>();
         public readonly MapSize Size;
 
-        public bool AddShip(Ship ship, int index)
+        public void AddShip(Ship ship, Point position)
         {
-            Point position = Tiles[index].Position;
-            List<Point> points = ShipFunctions.GetPoints(ship, position);
-
-            foreach (var point in points)
+            if(!checkCollisionNewShip(ship, position))
             {
-                if(point.X < 0 || point.Y < 0)
+                Console.WriteLine("Cannot add ship, collides with another.");
+                return;
+            }
+            else if(checkDuplicateShip(ship))
+            {
+                Console.WriteLine("Cannot add ship, already added.");
+                return;
+            }
+            
+            ShipsPosition temp = new ShipsPosition(ship, position);
+            ShipPositions.Add(temp);
+        }
+
+        private bool checkDuplicateShip(Ship ship)
+        {
+            foreach (var item in ShipPositions)
+            {
+                if (item.Ship == ship)
                 {
                     return false;
                 }
             }
-
-            Tiles[index].Ship = ship;
             return true;
+        }
+
+        private bool checkCollisionNewShip(Ship newShip, Point position)
+        {
+            List<Point> shipPoints = ShipFunctions.GetPoints(newShip, position);
+            foreach (var item in shipPoints)
+            {
+                if (!checkAllNeihgbors(item))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool checkAllNeihgbors(Point point)
+        {
+            foreach (MapDirection item in Enum.GetValues(typeof(MapDirection)))
+            {
+                if(!checkNeighborPointCollision(point, item))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool checkNeighborPointCollision(Point point, MapDirection direction)
+        {
+            bool success = false;
+            Point temp = new Point();
+            switch (direction)
+            {
+                case MapDirection.North:
+                    temp.X = point.X;
+                    temp.Y = point.Y - 1;
+                    success = checkPointsInCollisions(temp);
+                    break;
+                case MapDirection.NorthEast:
+                    temp.X = point.X + 1;
+                    temp.Y = point.Y - 1;
+                    success = checkPointsInCollisions(temp);
+                    break;
+                case MapDirection.East:
+                    temp.X = point.X + 1;
+                    temp.Y = point.Y;
+                    success = checkPointsInCollisions(temp);
+                    break;
+                case MapDirection.SouthEast:
+                    temp.X = point.X + 1;
+                    temp.Y = point.Y + 1;
+                    success = checkPointsInCollisions(temp);
+                    break;
+                case MapDirection.South:
+                    temp.X = point.X;
+                    temp.Y = point.Y + 1;
+                    success = checkPointsInCollisions(temp);
+                    break;
+                case MapDirection.SouthWest:
+                    temp.X = point.X - 1;
+                    temp.Y = point.Y + 1;
+                    success = checkPointsInCollisions(temp);
+                    break;
+                case MapDirection.West:
+                    temp.X = point.X - 1;
+                    temp.Y = point.Y;
+                    success = checkPointsInCollisions(temp);
+                    break;
+                case MapDirection.NorthWest:
+                    temp.X = point.X - 1;
+                    temp.Y = point.Y - 1;
+                    success = checkPointsInCollisions(temp);
+                    break;
+                default:
+                    break;
+            }
+
+            return success;
+        }
+
+        private bool checkPointsInCollisions(Point point)
+        {
+            foreach (var item in getAllCollisionPoints())
+            {
+                if (item.X == point.X && item.Y == point.Y - 1)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private List<Point> getAllCollisionPoints()
+        {
+            List<Point> positions = new List<Point>();
+            foreach (var item in ShipPositions)
+            {
+                List<Point> tempPositions = ShipFunctions.GetPoints(item.Ship, item.Position);
+                positions.AddRange(tempPositions);
+            }
+
+            return positions;
         }
 
         public TileMap(MapSize mapSize)
@@ -37,72 +151,40 @@ namespace Battleship
 
         public void DisplayMap()
         {
-            var query = from tile in Tiles
-                        where tile.Ship != null
-                        select tile;
-
             List<Point> pointList = new List<Point>();
-            foreach (var tile in query)
+            if(ShipPositions.Count > 0)
             {
-                pointList.AddRange(ShipFunctions.GetPoints(tile.Ship, tile.Position));
-            }
-
-            List<Point> overflowedPositions = new List<Point>();
-
-            for (int i = 0; i < pointList.Count - 1; i++)
-            {
-                for (int z = 1 + i; z < pointList.Count; z++)
+                foreach (var shipPos in ShipPositions)
                 {
-                    if (pointList[i].X == pointList[z].X && pointList[i].Y == pointList[z].Y)
-                    {
-                        overflowedPositions.Add(pointList[i]);
-                    }
+                    pointList.AddRange(ShipFunctions.GetPoints(shipPos.Ship, shipPos.Position));
                 }
             }
 
-            int index;
             for (int i = 0; i < Size.height; i++)
             {
                 for (int z = 0; z < Size.width; z++)
                 {
-                    index = Size.width * i + z;
-                    Point position = Tiles[index].Position;
-                    int pointType = 0;
-
-                    foreach (var point in overflowedPositions)
-                    {
-                        if(position.X == point.X && position.Y == point.Y)
-                        {
-                            pointType = 2;
-                            break;
-                        }
-                    }
-
-                    if (pointType == 0)
-                    {
-                        foreach (var point in pointList)
-                        {
-                            if (position.X == point.X && position.Y == point.Y)
-                            {
-                                pointType = 1;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (pointType == 2)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                    }
-                    else if(pointType == 1)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                    }
-                    Console.Write("■ ");
-                    Console.ResetColor();
+                    Point point = new Point();
+                    point.X = z;
+                    point.Y = i;
+                    displayPoint(point, pointList);
                 }
                 Console.WriteLine();
             }
+        }
+
+        private void displayPoint(Point point, List<Point> pointList)
+        {
+            foreach (var item in pointList)
+            {
+                if(item.X == point.X && item.Y == point.Y)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+            }
+            
+            Console.Write("■ ");
+            Console.ResetColor();
         }
 
         private void createMap()
@@ -115,6 +197,40 @@ namespace Battleship
                     Tiles.Add(tempTile);
                 }
             }
+        }
+
+        private Point getPositionByIndex(int index)
+        {
+            Point position = new Point();
+
+            if(index > (Size.height * Size.width) - 1)
+            {
+                throw new OverflowException();
+            }
+
+            int x;
+            int y;
+
+            if(index < Size.width)
+            {
+                x = Size.width;
+                y = 0;
+            }
+            else
+            {
+                x = index;
+                y = 0;
+                while (x > Size.width-1)
+                {
+                    index -= Size.width;
+                    y++;
+                }
+            }
+
+            position.X = x;
+            position.Y = y;
+
+            return position;
         }
     }
 }

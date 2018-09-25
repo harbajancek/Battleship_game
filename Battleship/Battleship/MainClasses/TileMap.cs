@@ -12,21 +12,21 @@ namespace Battleship
         public readonly List<Tile> Tiles = new List<Tile>();
         public readonly MapSize Size;
 
-        public void AddShip(Ship ship, Point position)
+        public bool AddShip(Ship ship, Point position)
         {
-            if(!checkCollisionNewShip(ship, position))
+            Point tempPosition = new Point();
+            tempPosition.X = position.X;
+            tempPosition.Y = position.Y;
+
+            if (!checkAddingNewShip(ship, position))
             {
-                Console.WriteLine("Cannot add ship, collides with another.");
-                return;
+                return false;
             }
-            else if(checkDuplicateShip(ship))
-            {
-                Console.WriteLine("Cannot add ship, already added.");
-                return;
-            }
-            
-            ShipsPosition temp = new ShipsPosition(ship, position);
+
+            ShipsPosition temp = new ShipsPosition(ship, tempPosition);
             ShipPositions.Add(temp);
+
+            return true;
         }
 
         private bool checkDuplicateShip(Ship ship)
@@ -38,6 +38,40 @@ namespace Battleship
                     return false;
                 }
             }
+            return true;
+        }
+
+        private bool checkAddingNewShip(Ship ship, Point position)
+        {
+            if (!checkCollisionNewShip(ship, position))
+            {
+                Console.WriteLine("Cannot add ship, collides with another.");
+                return false;
+            }
+            else if (!checkDuplicateShip(ship))
+            {
+                Console.WriteLine("Cannot add ship, already added.");
+                return false;
+            }
+            else if (!checkEdgeOfMapNewShip(ship, position))
+            {
+                Console.WriteLine("Cannot add ship, its parts are out of map.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool checkEdgeOfMapNewShip(Ship newShip, Point position)
+        {
+            foreach (var item in ShipFunctions.GetPoints(newShip, position))
+            {
+                if (item.X > Size.width-1 || item.Y > Size.height-1 || item.X < 0 || item.Y < 0)
+                {
+                    return false;
+                }
+            }
+            
             return true;
         }
 
@@ -160,8 +194,17 @@ namespace Battleship
                 }
             }
 
+            Console.Write("  ");
             for (int i = 0; i < Size.height; i++)
             {
+                Console.Write("{0} ", (char)(65+i));
+            }
+
+            Console.WriteLine();
+
+            for (int i = 0; i < Size.height; i++)
+            {
+                Console.Write("{0} ", i);
                 for (int z = 0; z < Size.width; z++)
                 {
                     Point point = new Point();
@@ -175,11 +218,12 @@ namespace Battleship
 
         private void displayPoint(Point point, List<Point> pointList)
         {
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
             foreach (var item in pointList)
             {
                 if(item.X == point.X && item.Y == point.Y)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             }
             

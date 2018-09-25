@@ -16,19 +16,22 @@ namespace Battleship
             TileMap Map1 = new TileMap(size);
 
             Ship ship = new Ship(ShipClass.Hydroplane, ShipDirection.South);
-
+            Ship ship2 = new Ship(ShipClass.Destroyer);
 
             Point tempPoint = new Point();
-            tempPoint.X = 1;
-            tempPoint.Y = 0;
+            tempPoint.X = 8;
+            tempPoint.Y = 8;
             Map1.AddShip(ship, tempPoint);
 
             Map1.DisplayMap();
             Console.WriteLine();
 
-            ship.Rotate();
+            tempPoint.X = 7;
+            tempPoint.Y = 6;
+            Map1.AddShip(ship2, tempPoint);
 
             Map1.DisplayMap();
+            Console.WriteLine();
 
             Console.Read();
         }

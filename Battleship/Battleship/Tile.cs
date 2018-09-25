@@ -9,7 +9,7 @@ namespace Battleship
     class Tile
     {
         public readonly Point Position = new Point();
-        public Ship Ship = null;
+        //public Ship Ship = null;
         private TileStatus status;
         public TileStatus Status
         {

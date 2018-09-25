@@ -52,6 +52,7 @@
     <Compile Include="ShipClass.cs" />
     <Compile Include="ShipDirection.cs" />
     <Compile Include="ShipFunctions.cs" />
+    <Compile Include="ShipsPositionList.cs" />
     <Compile Include="ShipStatus.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileMap.cs" />

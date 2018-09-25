@@ -8,6 +8,7 @@ namespace Battleship
 {
     class TileMap
     {
+        public readonly ;
         public readonly List<Tile> Tiles = new List<Tile>();
         public readonly MapSize Size;
 

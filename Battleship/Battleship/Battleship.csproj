@@ -50,7 +50,7 @@
     <Compile Include="SecondaryClasses\Point.cs" />
     <Compile Include="MainClasses\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MainClasses\Ship.cs" />
+    <Compile Include="SecondaryClasses\Ship.cs" />
     <Compile Include="enumy\ShipClass.cs" />
     <Compile Include="enumy\ShipDirection.cs" />
     <Compile Include="SecondaryClasses\ShipFunctions.cs" />

@@ -10,7 +10,8 @@ namespace Battleship
     {
         static void Main(string[] args)
         {
-            
+            Game newGame = new Game();
+            /*
             int height = 20;
             int width = 20;
             MapSize size = new MapSize(width, height);
@@ -27,6 +28,8 @@ namespace Battleship
             Map1.DisplayMap();
             Console.WriteLine();
 
+            ship.Rotate();
+
             tempPoint.X = 7;
             tempPoint.Y = 6;
             Map1.AddShip(ship2, tempPoint);
@@ -34,7 +37,7 @@ namespace Battleship
             Map1.DisplayMap();
             Console.WriteLine();
 
-            Console.Read();
+            Console.Read();*/
         }
     }
 }

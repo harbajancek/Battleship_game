@@ -16,10 +16,12 @@ namespace Battleship
         {
             pickSizePhase();
 
+            Console.Clear();
+
             mapOne = new TileMap(Size);
             mapTwo = new TileMap(Size);
 
-
+            pickShipPhase();
         }
 
         private void pickShipPhase()
@@ -30,7 +32,102 @@ namespace Battleship
 
         private void pickShipsToMap(TileMap map)
         {
+            List<Ship> userShips = new List<Ship>();
 
+            foreach (ShipClass item in Enum.GetValues(typeof(ShipClass)))
+            {
+                Ship tempShip = new Ship(item);
+                userShips.Add(tempShip);
+            }
+
+           
+            foreach (Ship ship in userShips)
+            {
+                Point position = new Point();
+                position.X = (map.Size.width - 1) / 2;
+                position.Y = (map.Size.height - 1) / 2;
+
+                ShipsPosition shipPosition = new ShipsPosition(ship, position);
+
+                string error = String.Empty;
+
+                while (true)
+                {
+                    mapOne.DisplayMap(shipPosition);
+
+                    if(error != String.Empty)
+                    {
+                        Console.WriteLine(error);
+                    }
+
+                    var readKey = Console.ReadKey();
+                    List<ConsoleKey> acceptable = new List<ConsoleKey>();
+                    acceptable.Add(ConsoleKey.RightArrow);
+                    acceptable.Add(ConsoleKey.LeftArrow);
+                    acceptable.Add(ConsoleKey.UpArrow);
+                    acceptable.Add(ConsoleKey.DownArrow);
+                    acceptable.Add(ConsoleKey.R);
+                    acceptable.Add(ConsoleKey.Enter);
+
+                    if (acceptable.Contains(readKey.Key))
+                    {
+                        if(readKey.Key == ConsoleKey.Enter)
+                        {
+                            if(map.AddShip(shipPosition.Ship, shipPosition.Position))
+                            {
+                                error = String.Empty;
+                                break;
+                            }
+                            else
+                            {
+                                error = "Can't add ship.";
+                            }
+
+                        }
+                        else
+                        {
+                            error = String.Empty;
+                            changeShipPositionByInput(readKey, shipPosition);
+                        }
+                    }
+                    Console.Clear();
+                }
+                Console.Clear();
+            }
+        }
+
+        private void changeShipPositionByInput(ConsoleKeyInfo key, ShipsPosition shipPosition)
+        {
+            switch (key.Key)
+            {
+                case ConsoleKey.RightArrow:
+                    {
+                        shipPosition.Position.X += 1;
+                        break;
+                    }
+                case ConsoleKey.LeftArrow:
+                    {
+                        shipPosition.Position.X -= 1;
+                        break;
+                    }
+                case ConsoleKey.UpArrow:
+                    {
+                        shipPosition.Position.Y -= 1;
+                        break;
+                    }
+                case ConsoleKey.DownArrow:
+                    {
+                        shipPosition.Position.Y += 1;
+                        break;
+                    }
+                case ConsoleKey.R:
+                    {
+                        shipPosition.Ship.Rotate();
+                        break;
+                    }
+                default:
+                    break;
+            }
         }
 
         private void pickSizePhase()
@@ -43,43 +140,43 @@ namespace Battleship
                 Console.WriteLine("3 - 20x20");
                 Console.WriteLine("4 - Custom value");
 
-                var key = Console.ReadKey();
-                List<char> acceptable = new List<char>();
-                acceptable.Add((char)(1));
-                acceptable.Add((char)(2));
-                acceptable.Add((char)(3));
-                acceptable.Add((char)(4));
+                var readKey = Console.ReadKey();
+                List<ConsoleKey> acceptable = new List<ConsoleKey>();
+                acceptable.Add(ConsoleKey.NumPad1);
+                acceptable.Add(ConsoleKey.NumPad2);
+                acceptable.Add(ConsoleKey.NumPad3);
+                acceptable.Add(ConsoleKey.NumPad4);
 
-                if (acceptable.Contains(key.KeyChar))
+                if (acceptable.Contains(readKey.Key))
                 {
-                    Size = getMapSizeFromChar(key.KeyChar);
+                    Size = getMapSizeFromInput(readKey);
                     return;
                 }
                 Console.WriteLine("You didn't choose any option");
             }
         }
 
-        private MapSize getMapSizeFromChar(char chr)
+        private MapSize getMapSizeFromInput(ConsoleKeyInfo readKey)
         {
             MapSize size;
-            switch (chr)
+            switch (readKey.Key)
             {
-                case (char)(1):
+                case ConsoleKey.NumPad1:
                     {
                         size = new MapSize(10, 10);
                         break;
                     }
-                case (char)(2):
+                case ConsoleKey.NumPad2:
                     {
                         size = new MapSize(15, 15);
                         break;
                     }
-                case (char)(3):
+                case ConsoleKey.NumPad3:
                     {
                         size = new MapSize(20, 20);
                         break;
                     }
-                case (char)(4):
+                case ConsoleKey.NumPad4:
                     {
                         int width;
                         int height;

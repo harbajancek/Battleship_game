@@ -43,7 +43,7 @@ namespace Battleship
 
         private bool checkAddingNewShip(Ship ship, Point position)
         {
-            if (!checkCollisionNewShip(ship, position))
+            if (!checkCollisionShip(ship, position))
             {
                 Console.WriteLine("Cannot add ship, collides with another.");
                 return false;
@@ -53,7 +53,7 @@ namespace Battleship
                 Console.WriteLine("Cannot add ship, already added.");
                 return false;
             }
-            else if (!checkEdgeOfMapNewShip(ship, position))
+            else if (!checkEdgeOfMapShip(ship, position))
             {
                 Console.WriteLine("Cannot add ship, its parts are out of map.");
                 return false;
@@ -62,7 +62,7 @@ namespace Battleship
             return true;
         }
 
-        private bool checkEdgeOfMapNewShip(Ship newShip, Point position)
+        private bool checkEdgeOfMapShip(Ship newShip, Point position)
         {
             foreach (var item in ShipFunctions.GetPoints(newShip, position))
             {
@@ -75,10 +75,22 @@ namespace Battleship
             return true;
         }
 
-        private bool checkCollisionNewShip(Ship newShip, Point position)
+        private bool checkCollisionShip(Ship ship, Point position)
         {
-            List<Point> shipPoints = ShipFunctions.GetPoints(newShip, position);
+            List<Point> shipPoints = ShipFunctions.GetPoints(ship, position);
             foreach (var item in shipPoints)
+            {
+                if (!checkAllNeihgbors(item))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool checkCollisionPointList(List<Point> points)
+        {
+            foreach (var item in points)
             {
                 if (!checkAllNeihgbors(item))
                 {
@@ -157,7 +169,7 @@ namespace Battleship
         {
             foreach (var item in getAllCollisionPoints())
             {
-                if (item.X == point.X && item.Y == point.Y - 1)
+                if (item.X == point.X && item.Y == point.Y)
                 {
                     return false;
                 }
@@ -183,8 +195,13 @@ namespace Battleship
             createMap();
         }
 
-        public void DisplayMap()
+        public void DisplayMap(ShipsPosition newShip = null)
         {
+            List<Point> newShipPoints = new List<Point>();
+            if (newShip != null)
+            {
+                newShipPoints = ShipFunctions.GetPoints(newShip.Ship, newShip.Position);
+            }
             List<Point> pointList = new List<Point>();
             if(ShipPositions.Count > 0)
             {
@@ -194,38 +211,64 @@ namespace Battleship
                 }
             }
 
-            Console.Write("");
+            Console.Write("   ");
             for (int i = 0; i < Size.height; i++)
             {
-                Console.Write("{0} ", (char)(65+i));
+                Console.Write("{0} ", i);// AFTER (char)(65+i) místo i
             }
 
             Console.WriteLine();
 
             for (int i = 0; i < Size.height; i++)
             {
-                
+                Console.Write("   ");
                 for (int z = 0; z < Size.width; z++)
                 {
                     Point point = new Point();
                     point.X = z;
                     point.Y = i;
-                    displayPoint(point, pointList);
+                    if (newShip != null)
+                    {
+                        displayPoint(point, pointList, newShipPoints);
+                    }
+                    else
+                    {
+                        displayPoint(point, pointList);
+                    }
+                        
                 }
 
-                Console.Write("{0} ", i);
+                Console.Write("{0} ", i);// i + 1
                 Console.WriteLine();
             }
         }
 
-        private void displayPoint(Point point, List<Point> pointList)
+        private void displayPoint(Point point, List<Point> pointList, List<Point> newShipPoints = null)
         {
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             foreach (var item in pointList)
             {
                 if(item.X == point.X && item.Y == point.Y)
                 {
                     Console.ForegroundColor = ConsoleColor.White;
+                }
+            }
+            if(newShipPoints != null)
+            {
+                foreach (var item in newShipPoints)
+                {
+                    if (item.X == point.X && item.Y == point.Y)
+                    {
+                        if (checkAllNeihgbors(item))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                        }
+                        
+                    }
                 }
             }
             

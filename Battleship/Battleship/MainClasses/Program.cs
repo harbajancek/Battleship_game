@@ -10,8 +10,9 @@ namespace Battleship
     {
         static void Main(string[] args)
         {
-            int height = 10;
-            int width = 10;
+            
+            int height = 20;
+            int width = 20;
             MapSize size = new MapSize(width, height);
             TileMap Map1 = new TileMap(size);
 

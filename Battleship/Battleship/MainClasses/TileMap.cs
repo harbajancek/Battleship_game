@@ -194,7 +194,7 @@ namespace Battleship
                 }
             }
 
-            Console.Write("  ");
+            Console.Write("");
             for (int i = 0; i < Size.height; i++)
             {
                 Console.Write("{0} ", (char)(65+i));
@@ -204,7 +204,7 @@ namespace Battleship
 
             for (int i = 0; i < Size.height; i++)
             {
-                Console.Write("{0} ", i);
+                
                 for (int z = 0; z < Size.width; z++)
                 {
                     Point point = new Point();
@@ -212,6 +212,8 @@ namespace Battleship
                     point.Y = i;
                     displayPoint(point, pointList);
                 }
+
+                Console.Write("{0} ", i);
                 Console.WriteLine();
             }
         }

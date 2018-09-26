@@ -24,8 +24,8 @@ namespace Battleship
 
         private void pickShipPhase()
         {
-            pickPhaseMap(mapOne);
-            pickPhaseMap(mapTwo);
+            pickShipsToMap(mapOne);
+            pickShipsToMap(mapTwo);
         }
 
         private void pickShipsToMap(TileMap map)

@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="enumy\MapDirection.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="MainClasses\Game.cs" />
     <Compile Include="SecondaryClasses\MapSize.cs" />
     <Compile Include="SecondaryClasses\PointFactory.cs" />
     <Compile Include="SecondaryClasses\Point.cs" />

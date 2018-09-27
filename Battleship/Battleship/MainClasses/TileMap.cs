@@ -192,7 +192,6 @@ namespace Battleship
         public TileMap(MapSize mapSize)
         {
             Size = mapSize;
-            createMap();
         }
 
         public void DisplayMap(ShipsPosition newShip = null)

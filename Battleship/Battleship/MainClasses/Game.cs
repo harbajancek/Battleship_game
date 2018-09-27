@@ -12,7 +12,7 @@ namespace Battleship
         private TileMap mapTwo;
         private MapSize Size;
 
-        public Game()
+        public void StartGame()
         {
             pickSizePhase();
 
@@ -22,6 +22,17 @@ namespace Battleship
             mapTwo = new TileMap(Size);
 
             pickShipPhase();
+
+            //playGamePhase();
+        }
+
+        private void playGamePhase()
+        {
+            /*
+            while ()
+            {
+
+            }*/
         }
 
         private void pickShipPhase()
@@ -53,7 +64,7 @@ namespace Battleship
 
                 while (true)
                 {
-                    mapOne.DisplayMap(shipPosition);
+                    map.DisplayMap(shipPosition);
 
                     if(error != String.Empty)
                     {

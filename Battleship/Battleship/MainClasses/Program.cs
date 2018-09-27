@@ -11,6 +11,8 @@ namespace Battleship
         static void Main(string[] args)
         {
             Game newGame = new Game();
+            newGame.StartGame();
+
             /*
             int height = 20;
             int width = 20;

@@ -23,16 +23,15 @@ namespace Battleship
 
             pickShipPhase();
 
-            //playGamePhase();
+            playGamePhase();
         }
 
         private void playGamePhase()
         {
-            /*
             while ()
             {
 
-            }*/
+            }
         }
 
         private void pickShipPhase()

@@ -353,6 +353,33 @@ namespace Battleship
             return pointList;
         }
 
+        public bool AreAllShipsSunk()
+        {
+            foreach (var item in ShipPosition)
+            {
+                if (isShipSunk(item))
+                {
+
+                }
+            }
+        }
+
+        public bool isShipSunk(ShipsPosition shipsPosition)
+        {
+            if(shipsPosition.Ship.Status == ShipStatus.Sunk)
+            {
+                return true;
+            }
+            else
+            {
+                List<Point> shipPoints = ShipFunctions.GetPoints(shipsPosition.Ship);
+
+                foreach (var item in shipPoints)
+                {
+                }
+            }
+        }
+
         /*
         private void createMap()
         {

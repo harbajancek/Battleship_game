@@ -9,7 +9,7 @@ namespace Battleship
     class TileMap
     {
         public readonly List<ShipsPosition> ShipPositions = new List<ShipsPosition>();
-        public readonly List<Tile> Tiles = new List<Tile>();
+        public readonly List<Point> AttackedTiles = new List<Point>();
         public readonly MapSize Size;
 
         public bool AddShip(Ship ship, Point position)
@@ -194,21 +194,13 @@ namespace Battleship
             Size = mapSize;
         }
 
-        public void DisplayMap(ShipsPosition newShip = null)
+        // zobrazení při pokládání lodě
+        public void DisplayMap(ShipsPosition newShip)
         {
             List<Point> newShipPoints = new List<Point>();
-            if (newShip != null)
-            {
-                newShipPoints = ShipFunctions.GetPoints(newShip.Ship, newShip.Position);
-            }
-            List<Point> pointList = new List<Point>();
-            if(ShipPositions.Count > 0)
-            {
-                foreach (var shipPos in ShipPositions)
-                {
-                    pointList.AddRange(ShipFunctions.GetPoints(shipPos.Ship, shipPos.Position));
-                }
-            }
+            newShipPoints = ShipFunctions.GetPoints(newShip.Ship, newShip.Position);
+
+            List<Point> pointList = getPointsFromPlacedShips();
 
             Console.Write("   ");
             for (int i = 0; i < Size.height; i++)
@@ -226,14 +218,7 @@ namespace Battleship
                     Point point = new Point();
                     point.X = z;
                     point.Y = i;
-                    if (newShip != null)
-                    {
-                        displayPoint(point, pointList, newShipPoints);
-                    }
-                    else
-                    {
-                        displayPoint(point, pointList);
-                    }
+                    displayPoint(point, pointList, newShipPoints);
                         
                 }
 
@@ -242,7 +227,88 @@ namespace Battleship
             }
         }
 
-        private void displayPoint(Point point, List<Point> pointList, List<Point> newShipPoints = null)
+        // normální zobrazení
+        public void DisplayMap(Point enemySelect = null)
+        {
+            List<Point> pointList = getPointsFromPlacedShips();
+
+            Console.Write("   ");
+            for (int i = 0; i < Size.height; i++)
+            {
+                Console.Write("{0} ", i);// AFTER (char)(65+i) místo i
+            }
+
+            Console.WriteLine();
+
+            for (int i = 0; i < Size.height; i++)
+            {
+                Console.Write("   ");
+                for (int z = 0; z < Size.width; z++)
+                {
+                    Point point = new Point();
+                    point.X = z;
+                    point.Y = i;
+                    displayPoint(point, pointList, enemySelect);
+
+                }
+
+                Console.Write("{0} ", i);// i + 1
+                Console.WriteLine();
+            }
+        }
+
+        // normální zobrazení
+        private void displayPoint(Point point, List<Point> pointList, Point enemySelect = null)
+        {
+            string dPoint = "■";
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            bool isShip = false;
+
+            foreach (var shipPoint in pointList)
+            {
+                if (shipPoint.X == point.X && shipPoint.Y == point.Y)
+                {
+                    if (enemySelect == null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    isShip = true;
+                    break;
+                }
+            }
+            foreach (var tile in AttackedTiles)
+            {
+                if (tile.X == point.X && tile.Y == point.Y)
+                {
+                    if (isShip)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    }
+                    break;
+
+                }
+            }
+
+            if (enemySelect != null)
+            {
+                if (point.X == enemySelect.X && point.Y == enemySelect.Y)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                }
+            }
+
+
+            Console.Write(dPoint);
+            Console.ResetColor();
+            Console.Write(" ");
+        }
+
+        // zobrazení při pokládání lodě
+        private void displayPoint(Point point, List<Point> pointList, List<Point> newShipPoints)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             foreach (var item in pointList)
@@ -252,29 +318,42 @@ namespace Battleship
                     Console.ForegroundColor = ConsoleColor.White;
                 }
             }
-            if(newShipPoints != null)
+
+            foreach (var item in newShipPoints)
             {
-                foreach (var item in newShipPoints)
+                if (item.X == point.X && item.Y == point.Y)
                 {
-                    if (item.X == point.X && item.Y == point.Y)
+                    if (checkAllNeihgbors(item))
                     {
-                        if (checkAllNeihgbors(item))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                        }
-                        
+                        Console.ForegroundColor = ConsoleColor.Green;
                     }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                        
                 }
             }
-            
-            Console.Write("■ ");
+
+            Console.Write("■");
             Console.ResetColor();
+            Console.Write(" ");
         }
 
+        private List<Point> getPointsFromPlacedShips()
+        {
+            List<Point> pointList = new List<Point>();
+            if (ShipPositions.Count > 0)
+            {
+                foreach (var shipPos in ShipPositions)
+                {
+                    pointList.AddRange(ShipFunctions.GetPoints(shipPos.Ship, shipPos.Position));
+                }
+            }
+            return pointList;
+        }
+
+        /*
         private void createMap()
         {
             for (int i = 0; i < Size.height; i++)
@@ -282,11 +361,11 @@ namespace Battleship
                 for (int z = 0; z < Size.width; z++)
                 {
                     Tile tempTile = new Tile(z, i);
-                    Tiles.Add(tempTile);
+                    AttackedTiles.Add(tempTile);
                 }
             }
-        }
-
+        }*/
+        /*
         private Point getPositionByIndex(int index)
         {
             Point position = new Point();
@@ -320,5 +399,6 @@ namespace Battleship
 
             return position;
         }
+        */
     }
 }

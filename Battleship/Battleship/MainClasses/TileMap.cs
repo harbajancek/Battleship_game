@@ -12,6 +12,27 @@ namespace Battleship
         public readonly List<Point> AttackedTiles = new List<Point>();
         public readonly MapSize Size;
 
+        public bool AddTarget(out string message, Point target)
+        {
+            if (AttackedTiles.Any(item => item.X == target.X && item.Y == target.Y))
+            {
+                message = "Tile has been already attacked.";
+                return false;
+            }
+
+            if (getPointsFromPlacedShips().Any(item => item.X == target.X && item.Y == target.Y))
+            {
+                AttackedTiles.Add(target);
+                message = "You hit an enemy ship!";
+                return true;
+            }
+            else
+            {
+                message = "You hit nothing";
+                return true;
+            }
+        }
+
         public bool AddShip(Ship ship, Point position)
         {
             Point tempPosition = new Point();
@@ -53,7 +74,7 @@ namespace Battleship
                 Console.WriteLine("Cannot add ship, already added.");
                 return false;
             }
-            else if (!checkEdgeOfMapShip(ship, position))
+            else if (!CheckEdgeOfMapShip(ship, position))
             {
                 Console.WriteLine("Cannot add ship, its parts are out of map.");
                 return false;
@@ -62,7 +83,7 @@ namespace Battleship
             return true;
         }
 
-        private bool checkEdgeOfMapShip(Ship newShip, Point position)
+        public bool CheckEdgeOfMapShip(Ship newShip, Point position)
         {
             foreach (var item in ShipFunctions.GetPoints(newShip, position))
             {
@@ -203,9 +224,9 @@ namespace Battleship
             List<Point> pointList = getPointsFromPlacedShips();
 
             Console.Write("   ");
-            for (int i = 0; i < Size.height; i++)
+            for (int i = 0; i < Size.width; i++)
             {
-                Console.Write("{0} ", i);// AFTER (char)(65+i) místo i
+                Console.Write("{0} ", (char)(65 + i));
             }
 
             Console.WriteLine();
@@ -222,7 +243,7 @@ namespace Battleship
                         
                 }
 
-                Console.Write("{0} ", i);// i + 1
+                Console.Write("{0} ", i + 1);
                 Console.WriteLine();
             }
         }
@@ -355,28 +376,27 @@ namespace Battleship
 
         public bool AreAllShipsSunk()
         {
-            foreach (var item in ShipPosition)
-            {
-                if (isShipSunk(item))
-                {
-
-                }
-            }
+            return ShipPositions.All(item => isShipSunk(item));
         }
 
-        public bool isShipSunk(ShipsPosition shipsPosition)
+        public bool isShipSunk(ShipsPosition shipPosition)
         {
-            if(shipsPosition.Ship.Status == ShipStatus.Sunk)
+            if(shipPosition.Ship.Status == ShipStatus.Sunk)
             {
                 return true;
             }
             else
             {
-                List<Point> shipPoints = ShipFunctions.GetPoints(shipsPosition.Ship);
+                List<Point> shipPoints = ShipFunctions.GetPoints(shipPosition.Ship, shipPosition.Position);
 
-                foreach (var item in shipPoints)
+                bool result = shipPoints.All(item => AttackedTiles.Any(tile => item.X == tile.X && item.Y == tile.Y));
+
+                if (result)
                 {
+                    shipPosition.Ship.Sink();
+                    return true;
                 }
+                return false;
             }
         }
 

@@ -8,8 +8,7 @@ namespace Battleship
 {
     class Game
     {
-        private TileMap mapOne;
-        private TileMap mapTwo;
+        private List<Player> Players = new List<Player>();
         private MapSize Size;
 
         public void StartGame()
@@ -18,9 +17,21 @@ namespace Battleship
 
             Console.Clear();
 
-            mapOne = new TileMap(Size);
-            mapTwo = new TileMap(Size);
+            Player player = new Player
+            {
+                Map = new TileMap(Size),
+                Name = "Anon 1"
+            };
 
+            Players.Add(player);
+
+            player = new Player
+            {
+                Map = new TileMap(Size),
+                Name = "Anon 2"
+            };
+
+            Players.Add(player);
             pickShipPhase();
 
             playGamePhase();
@@ -28,42 +39,120 @@ namespace Battleship
 
         private void playGamePhase()
         {
-            while ()
-            {
 
+            while (!Players.Any(player => player.Map.AreAllShipsSunk()))
+            {
+                for (int i = 0; i < Players.Count; i++)
+                {
+                    pickTarget(i);
+                }
             }
+        }
+
+        private void pickTarget(int PlayerIndex)
+        {
+            string playerName = Players[PlayerIndex].Name;
+            TileMap enemyMap;
+
+            if(PlayerIndex == 1)
+            {
+                enemyMap = Players[0].Map;
+            }
+            else
+            {
+                enemyMap = Players[1].Map;
+            }
+
+            List<ConsoleKey> acceptable = new List<ConsoleKey>();
+            acceptable.Add(ConsoleKey.RightArrow);
+            acceptable.Add(ConsoleKey.LeftArrow);
+            acceptable.Add(ConsoleKey.UpArrow);
+            acceptable.Add(ConsoleKey.DownArrow);
+            acceptable.Add(ConsoleKey.Enter);
+
+            Point target = new Point();
+            target.X = (enemyMap.Size.width - 1) / 2;
+            target.Y = (enemyMap.Size.height - 1) / 2;
+
+            string message = String.Empty;
+            while (true)
+            {
+                Console.WriteLine("{0}'s turn to pick a target tile.", Players[PlayerIndex].Name);
+                enemyMap.DisplayMap(target);
+
+                if (message != String.Empty)
+                {
+                    Console.WriteLine(message);
+                }
+
+                var readKey = Console.ReadKey();
+
+
+                if (acceptable.Contains(readKey.Key))
+                {
+                    if (readKey.Key == ConsoleKey.Enter)
+                    {
+                        if (enemyMap.AddTarget(out message, target))
+                        {
+                            Console.WriteLine(message);
+                            System.Threading.Thread.Sleep(1200);
+                            break;
+                        }
+
+                    }
+                    else
+                    {
+                        message = String.Empty;
+                        changeTargetByInput(target, readKey, enemyMap);
+                    }
+                }
+                Console.Clear();
+            }
+            Console.Clear();
         }
 
         private void pickShipPhase()
         {
-            pickShipsToMap(mapOne);
-            pickShipsToMap(mapTwo);
+            Players.ForEach(player => pickShips(player));
         }
 
-        private void pickShipsToMap(TileMap map)
+        private void pickShips(Player player)
         {
             List<Ship> userShips = new List<Ship>();
 
+            Ship tempShip = new Ship(ShipClass.Submarine);
+            userShips.Add(tempShip);
+
+            /*
             foreach (ShipClass item in Enum.GetValues(typeof(ShipClass)))
             {
                 Ship tempShip = new Ship(item);
                 userShips.Add(tempShip);
-            }
+            }*/
 
            
             foreach (Ship ship in userShips)
             {
                 Point position = new Point();
-                position.X = (map.Size.width - 1) / 2;
-                position.Y = (map.Size.height - 1) / 2;
+                position.X = (player.Map.Size.width - 1) / 2;
+                position.Y = (player.Map.Size.height - 1) / 2;
 
                 ShipsPosition shipPosition = new ShipsPosition(ship, position);
 
                 string error = String.Empty;
 
+                List<ConsoleKey> acceptable = new List<ConsoleKey>();
+                acceptable.Add(ConsoleKey.RightArrow);
+                acceptable.Add(ConsoleKey.LeftArrow);
+                acceptable.Add(ConsoleKey.UpArrow);
+                acceptable.Add(ConsoleKey.DownArrow);
+                acceptable.Add(ConsoleKey.R);
+                acceptable.Add(ConsoleKey.Enter);
+
                 while (true)
                 {
-                    map.DisplayMap(shipPosition);
+                    Console.WriteLine("{0}'s turn", player.Name);
+                    player.Map.DisplayMap(shipPosition);
 
                     if(error != String.Empty)
                     {
@@ -71,19 +160,13 @@ namespace Battleship
                     }
 
                     var readKey = Console.ReadKey();
-                    List<ConsoleKey> acceptable = new List<ConsoleKey>();
-                    acceptable.Add(ConsoleKey.RightArrow);
-                    acceptable.Add(ConsoleKey.LeftArrow);
-                    acceptable.Add(ConsoleKey.UpArrow);
-                    acceptable.Add(ConsoleKey.DownArrow);
-                    acceptable.Add(ConsoleKey.R);
-                    acceptable.Add(ConsoleKey.Enter);
+                    
 
                     if (acceptable.Contains(readKey.Key))
                     {
                         if(readKey.Key == ConsoleKey.Enter)
                         {
-                            if(map.AddShip(shipPosition.Ship, shipPosition.Position))
+                            if(player.Map.AddShip(shipPosition.Ship, shipPosition.Position))
                             {
                                 error = String.Empty;
                                 break;
@@ -97,7 +180,7 @@ namespace Battleship
                         else
                         {
                             error = String.Empty;
-                            changeShipPositionByInput(readKey, shipPosition);
+                            changeShipPositionByInput(readKey, shipPosition, player.Map);
                         }
                     }
                     Console.Clear();
@@ -105,34 +188,121 @@ namespace Battleship
                 Console.Clear();
             }
         }
+        private void changeTargetByInput(Point target, ConsoleKeyInfo key, TileMap map)
+        {
+            Point newPoint = new Point();
+            switch (key.Key)
+            {
+                case ConsoleKey.RightArrow:
+                    {
+                        newPoint.X = target.X + 1;
+                        newPoint.Y = target.Y;
+                        if(!(newPoint.X > map.Size.width - 1 || newPoint.Y > map.Size.height - 1 || newPoint.X < 0 || newPoint.Y < 0))
+                        {
+                            target.X = newPoint.X;
+                            target.Y = newPoint.Y;
+                        }
+                        break;
+                    }
+                case ConsoleKey.LeftArrow:
+                    {
+                        newPoint.X = target.X - 1;
+                        newPoint.Y = target.Y;
+                        if (!(newPoint.X > map.Size.width - 1 || newPoint.Y > map.Size.height - 1 || newPoint.X < 0 || newPoint.Y < 0))
+                        {
+                            target.X = newPoint.X;
+                            target.Y = newPoint.Y;
+                        }
+                        break;
+                    }
+                case ConsoleKey.UpArrow:
+                    {
+                        newPoint.X = target.X;
+                        newPoint.Y = target.Y - 1;
+                        if (!(newPoint.X > map.Size.width - 1 || newPoint.Y > map.Size.height - 1 || newPoint.X < 0 || newPoint.Y < 0))
+                        {
+                            target.X = newPoint.X;
+                            target.Y = newPoint.Y;
+                        }
+                        break;
+                    }
+                case ConsoleKey.DownArrow:
+                    {
+                        newPoint.X = target.X;
+                        newPoint.Y = target.Y + 1;
+                        if (!(newPoint.X > map.Size.width - 1 || newPoint.Y > map.Size.height - 1 || newPoint.X < 0 || newPoint.Y < 0))
+                        {
+                            target.X = newPoint.X;
+                            target.Y = newPoint.Y;
+                        }
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
 
-        private void changeShipPositionByInput(ConsoleKeyInfo key, ShipsPosition shipPosition)
+
+        private void changeShipPositionByInput(ConsoleKeyInfo key, ShipsPosition shipPosition, TileMap map)
         {
             switch (key.Key)
             {
                 case ConsoleKey.RightArrow:
                     {
-                        shipPosition.Position.X += 1;
+                        Point newPoint = new Point();
+                        newPoint.X = shipPosition.Position.X + 1;
+                        newPoint.Y = shipPosition.Position.Y;
+                        if(map.CheckEdgeOfMapShip(shipPosition.Ship, newPoint))
+                        {
+                            shipPosition.Position = newPoint;
+                        }
                         break;
                     }
                 case ConsoleKey.LeftArrow:
                     {
-                        shipPosition.Position.X -= 1;
+                        Point newPoint = new Point();
+                        newPoint.X = shipPosition.Position.X - 1;
+                        newPoint.Y = shipPosition.Position.Y;
+                        if (map.CheckEdgeOfMapShip(shipPosition.Ship, newPoint))
+                        {
+                            shipPosition.Position = newPoint;
+                        }
                         break;
                     }
                 case ConsoleKey.UpArrow:
                     {
-                        shipPosition.Position.Y -= 1;
+                        Point newPoint = new Point();
+                        newPoint.X = shipPosition.Position.X;
+                        newPoint.Y = shipPosition.Position.Y - 1;
+                        if (map.CheckEdgeOfMapShip(shipPosition.Ship, newPoint))
+                        {
+                            shipPosition.Position = newPoint;
+                        }
                         break;
                     }
                 case ConsoleKey.DownArrow:
                     {
-                        shipPosition.Position.Y += 1;
+                        Point newPoint = new Point();
+                        newPoint.X = shipPosition.Position.X;
+                        newPoint.Y = shipPosition.Position.Y + 1;
+                        if (map.CheckEdgeOfMapShip(shipPosition.Ship, newPoint))
+                        {
+                            shipPosition.Position = newPoint;
+                        }
                         break;
                     }
                 case ConsoleKey.R:
                     {
-                        shipPosition.Ship.Rotate();
+                        Ship tempShip = new Ship(shipPosition.Ship.Class, shipPosition.Ship.Direction);
+                        for (int i = 0; i < 3; i++)
+                        {
+                            tempShip.Rotate();
+                            if (map.CheckEdgeOfMapShip(tempShip, shipPosition.Position))
+                            {
+                                shipPosition.Ship = tempShip;
+                                break;
+                            }
+                        }
                         break;
                     }
                 default:
@@ -190,12 +360,13 @@ namespace Battleship
                     {
                         int width;
                         int height;
+                        Console.Clear();
                         while (true)
                         {
                             Console.Write("Select width: ");
                             var pickWidth = Console.ReadLine();
 
-                            if (int.TryParse(pickWidth, out width))
+                            if (!int.TryParse(pickWidth, out width))
                             {
                                 Console.Clear();
                                 Console.WriteLine("You didn't write a number");
@@ -207,12 +378,13 @@ namespace Battleship
                             }
                         }
 
+                        Console.Clear();
                         while (true)
                         {
-                            Console.Write("Select height ");
+                            Console.Write("Select height: ");
                             var pickHeight = Console.ReadLine();
 
-                            if (int.TryParse(pickHeight, out height))
+                            if (!int.TryParse(pickHeight, out height))
                             {
                                 Console.Clear();
                                 Console.WriteLine("You didn't write a number");

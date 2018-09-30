@@ -47,7 +47,6 @@
     <Compile Include="MainClasses\Game.cs" />
     <Compile Include="MainClasses\Player.cs" />
     <Compile Include="SecondaryClasses\MapSize.cs" />
-    <Compile Include="SecondaryClasses\PointFactory.cs" />
     <Compile Include="SecondaryClasses\Point.cs" />
     <Compile Include="MainClasses\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,9 +56,7 @@
     <Compile Include="SecondaryClasses\ShipFunctions.cs" />
     <Compile Include="SecondaryClasses\ShipsPosition.cs" />
     <Compile Include="enumy\ShipStatus.cs" />
-    <Compile Include="SecondaryClasses\Tile.cs" />
     <Compile Include="MainClasses\TileMap.cs" />
-    <Compile Include="enumy\TileStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

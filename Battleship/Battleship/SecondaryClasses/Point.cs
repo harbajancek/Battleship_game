@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    public enum MapSize
+    class Point
     {
-        Small = 0,
-        Medium = 1,
-        Big = 3
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 }

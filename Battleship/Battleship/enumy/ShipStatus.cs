@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Battleship
 {
-    public enum Direction
+    enum ShipStatus
     {
-        North = 0,
-        East = 1,
-        South = 2,
-        West = 3
+        Sunk = 0,
+        Sailing = 1
     }
 }

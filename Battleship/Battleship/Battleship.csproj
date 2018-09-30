@@ -43,21 +43,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Direction.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="MapSize.cs" />
-    <Compile Include="Point.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="enumy\MapDirection.cs" />
+    <Compile Include="MainClasses\Game.cs" />
+    <Compile Include="MainClasses\Player.cs" />
+    <Compile Include="SecondaryClasses\MapSize.cs" />
+    <Compile Include="SecondaryClasses\PointFactory.cs" />
+    <Compile Include="SecondaryClasses\Point.cs" />
+    <Compile Include="MainClasses\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Ship.cs" />
-    <Compile Include="ShipClass.cs" />
-    <Compile Include="ShipState.cs" />
-    <Compile Include="Tile.cs" />
-    <Compile Include="TileState.cs" />
+    <Compile Include="SecondaryClasses\Ship.cs" />
+    <Compile Include="enumy\ShipClass.cs" />
+    <Compile Include="enumy\ShipDirection.cs" />
+    <Compile Include="SecondaryClasses\ShipFunctions.cs" />
+    <Compile Include="SecondaryClasses\ShipsPosition.cs" />
+    <Compile Include="enumy\ShipStatus.cs" />
+    <Compile Include="SecondaryClasses\Tile.cs" />
+    <Compile Include="MainClasses\TileMap.cs" />
+    <Compile Include="enumy\TileStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

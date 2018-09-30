@@ -10,12 +10,15 @@ namespace Battleship
     {
         private Player[] Players;
         private MapSize Size;
+        private List<ShipClass> pickedShipClasses = new List<ShipClass>();
 
         public void StartGame()
         {
             pickSizePhase();
 
             pickPlayerName();
+
+            pickShipClassses();
 
             pickShipPhase();
 
@@ -163,18 +166,11 @@ namespace Battleship
         private void pickShips(Player player)
         {
             List<Ship> userShips = new List<Ship>();
-
-            Ship tempShip = new Ship(ShipClass.Submarine);
-            userShips.Add(tempShip);
-
-            /*
-            foreach (ShipClass item in Enum.GetValues(typeof(ShipClass)))
+            foreach (var item in pickedShipClasses)
             {
                 Ship tempShip = new Ship(item);
                 userShips.Add(tempShip);
-            }*/
-
-           
+            }
             foreach (Ship ship in userShips)
             {
                 Point position = new Point();
@@ -231,6 +227,79 @@ namespace Battleship
                 }
                 Console.Clear();
             }
+        }
+
+        private void pickShipClassses()
+        {
+            foreach (ShipClass shipClass in Enum.GetValues(typeof(ShipClass)))
+            {
+                Ship ship = new Ship(shipClass);
+                Point tempPoint = new Point();
+                List<Point> points = ShipFunctions.GetPoints(ship, tempPoint);
+
+                int max_x = points.Max(item => item.X);
+                int max_y = points.Max(item => item.Y);
+                int min_x = points.Min(item => item.X);
+                int min_y = points.Min(item => item.Y);
+
+                while (min_x < 1)
+                {
+                    min_x++;
+                    max_x++;
+                    points.ForEach(item => item.X++);
+                }
+
+                while (min_y < 1)
+                {
+                    min_y++;
+                    max_y++;
+                    points.ForEach(item => item.Y++);
+                }
+                Console.WriteLine("Choose the ships:");
+                Console.WriteLine("ENTER - yes   X - no");
+
+                tempPoint = new Point();
+                for (int i = 0; i < max_y + 2; i++)
+                {
+                    for (int z = 0; z < max_x + 2; z++)
+                    {
+                        tempPoint.X = z;
+                        tempPoint.Y = i;
+                        if (points.Any(item => item.X == tempPoint.X && item.Y == tempPoint.Y))
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                        }
+
+                        Console.Write("■ ");
+                        Console.ResetColor();
+                    }
+                    Console.WriteLine();
+                }
+
+                while (true)
+                {
+                    List<ConsoleKey> acceptable = new List<ConsoleKey>();
+                    acceptable.Add(ConsoleKey.Enter);
+                    acceptable.Add(ConsoleKey.X);
+                    var readKey = Console.ReadKey();
+
+                    if (acceptable.Contains(readKey.Key))
+                    {
+                        if (readKey.Key == ConsoleKey.Enter)
+                        {
+                            pickedShipClasses.Add(shipClass);
+                        }
+                        break;
+                    }
+                }
+                Console.Clear();
+            }
+            
+            
         }
         private void changeTargetByInput(Point target, ConsoleKeyInfo key, TileMap map)
         {

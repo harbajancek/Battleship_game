@@ -121,36 +121,74 @@ namespace Battleship
                     for (int i = 1; i < length; i++)
                     {
                         Point tempPoint = new Point();
-                        tempPoint.X = point.X;
-                        tempPoint.Y = point.Y - i;
-                        pointList.Add(tempPoint);
+                        if (i % 2 == 1)
+                        {
+                            tempPoint.X = point.X;
+                            tempPoint.Y = point.Y - i + i / 2;
+                            pointList.Add(tempPoint);
+                        }
+                        else
+                        {
+                            tempPoint.X = point.X;
+                            tempPoint.Y = point.Y + i - i / 2;
+                            pointList.Add(tempPoint);
+                        }
+                        
                     }
                     break;
                 case ShipDirection.East:
                     for (int i = 1; i < length; i++)
                     {
                         Point tempPoint = new Point();
-                        tempPoint.X = point.X + i;
-                        tempPoint.Y = point.Y;
-                        pointList.Add(tempPoint);
+                        
+                        if (i % 2 == 1)
+                        {
+                            tempPoint.X = point.X + i - i / 2;
+                            tempPoint.Y = point.Y;
+                            pointList.Add(tempPoint);
+                        }
+                        else
+                        {
+                            tempPoint.X = point.X - i + i / 2;
+                            tempPoint.Y = point.Y;
+                            pointList.Add(tempPoint);
+                        }
                     }
                     break;
                 case ShipDirection.South:
                     for (int i = 1; i < length; i++)
                     {
                         Point tempPoint = new Point();
-                        tempPoint.X = point.X;
-                        tempPoint.Y = point.Y + i;
-                        pointList.Add(tempPoint);
+                        if (i % 2 == 1)
+                        {
+                            tempPoint.X = point.X;
+                            tempPoint.Y = point.Y + i - i / 2;
+                            pointList.Add(tempPoint);
+                        }
+                        else
+                        {
+                            tempPoint.X = point.X;
+                            tempPoint.Y = point.Y - i + i / 2;
+                            pointList.Add(tempPoint);
+                        }
                     }
                     break;
                 case ShipDirection.West:
                     for (int i = 1; i < length; i++)
                     {
                         Point tempPoint = new Point();
-                        tempPoint.X = point.X - i;
-                        tempPoint.Y = point.Y;
-                        pointList.Add(tempPoint);
+                        if (i % 2 == 1)
+                        {
+                            tempPoint.X = point.X - i + i / 2;
+                            tempPoint.Y = point.Y;
+                            pointList.Add(tempPoint);
+                        }
+                        else
+                        {
+                            tempPoint.X = point.X + i - i / 2;
+                            tempPoint.Y = point.Y;
+                            pointList.Add(tempPoint);
+                        }
                     }
                     break;
                 default:

@@ -30,6 +30,7 @@ namespace Battleship
             }
             else
             {
+                AttackedTiles.Add(target);
                 message = "You hit nothing";
                 hit = false;
                 return true;

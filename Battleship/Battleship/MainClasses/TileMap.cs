@@ -12,11 +12,12 @@ namespace Battleship
         public readonly List<Point> AttackedTiles = new List<Point>();
         public readonly MapSize Size;
 
-        public bool AddTarget(out string message, Point target)
+        public bool AddTarget(out string message, out bool hit, Point target)
         {
             if (AttackedTiles.Any(item => item.X == target.X && item.Y == target.Y))
             {
                 message = "Tile has been already attacked.";
+                hit = false;
                 return false;
             }
 
@@ -24,11 +25,13 @@ namespace Battleship
             {
                 AttackedTiles.Add(target);
                 message = "You hit an enemy ship!";
+                hit = true;
                 return true;
             }
             else
             {
                 message = "You hit nothing";
+                hit = false;
                 return true;
             }
         }
@@ -256,7 +259,7 @@ namespace Battleship
             Console.Write("   ");
             for (int i = 0; i < Size.height; i++)
             {
-                Console.Write("{0} ", i);// AFTER (char)(65+i) místo i
+                Console.Write("{0} ", (char)(65 + i));
             }
 
             Console.WriteLine();
@@ -273,7 +276,7 @@ namespace Battleship
 
                 }
 
-                Console.Write("{0} ", i);// i + 1
+                Console.Write("{0} ", i + 1);
                 Console.WriteLine();
             }
         }
@@ -399,53 +402,5 @@ namespace Battleship
                 return false;
             }
         }
-
-        /*
-        private void createMap()
-        {
-            for (int i = 0; i < Size.height; i++)
-            {
-                for (int z = 0; z < Size.width; z++)
-                {
-                    Tile tempTile = new Tile(z, i);
-                    AttackedTiles.Add(tempTile);
-                }
-            }
-        }*/
-        /*
-        private Point getPositionByIndex(int index)
-        {
-            Point position = new Point();
-
-            if(index > (Size.height * Size.width) - 1)
-            {
-                throw new OverflowException();
-            }
-
-            int x;
-            int y;
-
-            if(index < Size.width)
-            {
-                x = Size.width;
-                y = 0;
-            }
-            else
-            {
-                x = index;
-                y = 0;
-                while (x > Size.width-1)
-                {
-                    index -= Size.width;
-                    y++;
-                }
-            }
-
-            position.X = x;
-            position.Y = y;
-
-            return position;
-        }
-        */
     }
 }

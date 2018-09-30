@@ -12,6 +12,8 @@ namespace Battleship
         {
             Game newGame = new Game();
             newGame.StartGame();
+            Console.WriteLine("Press enter to close this program...");
+            Console.ReadLine();
 
             /*
             int height = 20;

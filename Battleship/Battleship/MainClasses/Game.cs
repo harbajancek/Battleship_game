@@ -8,41 +8,81 @@ namespace Battleship
 {
     class Game
     {
-        private List<Player> Players = new List<Player>();
+        private Player[] Players;
         private MapSize Size;
 
         public void StartGame()
         {
             pickSizePhase();
 
-            Console.Clear();
+            pickPlayerName();
 
-            Player player = new Player
-            {
-                Map = new TileMap(Size),
-                Name = "Anon 1"
-            };
-
-            Players.Add(player);
-
-            player = new Player
-            {
-                Map = new TileMap(Size),
-                Name = "Anon 2"
-            };
-
-            Players.Add(player);
             pickShipPhase();
 
             playGamePhase();
+
+            endGamePhase();
+        }
+
+        private void pickPlayerName()
+        {
+            Console.Write("First player name: ");
+            string playerOneName = Console.ReadLine();
+
+            Console.Write("Second player name: ");
+            string playerTwoName = Console.ReadLine();
+
+            Players = new Player[2] {
+                new Player
+                    {
+                        Map = new TileMap(Size),
+                        Name = playerOneName
+                    },
+                new Player
+                    {
+                        Map = new TileMap(Size),
+                        Name = playerTwoName
+                    }
+                };
+
+            Console.Clear();
+        }
+
+        private void endGamePhase()
+        {
+            Console.Write("Game result: ");
+            bool playerOneResult = Players[0].Map.AreAllShipsSunk();
+            bool playerTwoResult = Players[1].Map.AreAllShipsSunk();
+            Player winner = (playerOneResult && playerTwoResult) ? null : (playerOneResult) ? Players[1] : Players[0];
+
+            if (winner == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("TIE!");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("{0} WINS!", winner.Name);
+            }
+            Console.ResetColor();
+            Console.WriteLine();
+
+            foreach (var player in Players)
+            {
+                Console.WriteLine("{0}'s game statistics:", player.Name);
+                Console.WriteLine("Ship tiles hit: {0}", player.HitCount);
+                Console.WriteLine("Ship tiles NOT hit: {0}", player.NotHitCount);
+                Console.WriteLine("Accuracy: {0}%", (int)(((float)player.HitCount / ((float)player.HitCount + (float)player.NotHitCount))*100));
+                Console.WriteLine();
+            }
         }
 
         private void playGamePhase()
         {
-
             while (!Players.Any(player => player.Map.AreAllShipsSunk()))
             {
-                for (int i = 0; i < Players.Count; i++)
+                for (int i = 0; i < Players.Length; i++)
                 {
                     pickTarget(i);
                 }
@@ -51,7 +91,7 @@ namespace Battleship
 
         private void pickTarget(int PlayerIndex)
         {
-            string playerName = Players[PlayerIndex].Name;
+            Player player = Players[PlayerIndex];
             TileMap enemyMap;
 
             if(PlayerIndex == 1)
@@ -75,9 +115,10 @@ namespace Battleship
             target.Y = (enemyMap.Size.height - 1) / 2;
 
             string message = String.Empty;
+            bool hit;
             while (true)
             {
-                Console.WriteLine("{0}'s turn to pick a target tile.", Players[PlayerIndex].Name);
+                Console.WriteLine("{0}'s turn to pick a target tile.", player.Name);
                 enemyMap.DisplayMap(target);
 
                 if (message != String.Empty)
@@ -92,13 +133,13 @@ namespace Battleship
                 {
                     if (readKey.Key == ConsoleKey.Enter)
                     {
-                        if (enemyMap.AddTarget(out message, target))
+                        if (enemyMap.AddTarget(out message, out hit, target))
                         {
                             Console.WriteLine(message);
+                            player.Hit(hit);
                             System.Threading.Thread.Sleep(1200);
                             break;
                         }
-
                     }
                     else
                     {
@@ -113,7 +154,10 @@ namespace Battleship
 
         private void pickShipPhase()
         {
-            Players.ForEach(player => pickShips(player));
+            foreach (var player in Players)
+            {
+                pickShips(player);
+            }
         }
 
         private void pickShips(Player player)
@@ -330,6 +374,7 @@ namespace Battleship
                 if (acceptable.Contains(readKey.Key))
                 {
                     Size = getMapSizeFromInput(readKey);
+                    Console.Clear();
                     return;
                 }
                 Console.WriteLine("You didn't choose any option");
@@ -372,6 +417,12 @@ namespace Battleship
                                 Console.WriteLine("You didn't write a number");
                                 continue;
                             }
+                            else if (width == 1)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("Number must be at least 2 or more");
+                                continue;
+                            }
                             else
                             {
                                 break;
@@ -388,6 +439,12 @@ namespace Battleship
                             {
                                 Console.Clear();
                                 Console.WriteLine("You didn't write a number");
+                                continue;
+                            }
+                            else if (width == 1)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("Number must be at least 2 or more");
                                 continue;
                             }
                             else

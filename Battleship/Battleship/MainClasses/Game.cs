@@ -481,6 +481,10 @@ namespace Battleship
                 Console.WriteLine();
             }
         }
+        //
+        // Souhrn:
+        //  Vrátí velikost mapy podle toho, co vybral nebo vybere uživatel.
+        //
         private MapSize getMapSizeFromInput(ConsoleKeyInfo readKey)
         {
             MapSize size;

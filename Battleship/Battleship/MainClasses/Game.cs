@@ -31,35 +31,39 @@ namespace Battleship
         }
         private void pickNumberOfPlayers()
         {
-            Console.WriteLine("Pick number of players");
-            var input = Console.ReadLine();
-            int.TryParse();
+            while (true)
+            {
+                Console.Write("Pick number of players: ");
+                string input = Console.ReadLine();
+                int intInput;
+                bool success = int.TryParse(input, out intInput);
+                if (success)
+                {
+                    numberOfPlayers = intInput;
+                    Console.Clear();
+                    Players = new Player[numberOfPlayers];
+                    break;
+                }
+                Console.WriteLine("You didn't pick a number!");
+            }
+            
         }
         //
         // Souhrn:
-        //  Hráči si vybírají své jména.
+        //  Hráči si vybírají svá jména.
         //
         private void pickPlayerName()
         {
-            Console.Write("First player name: ");
-            string playerOneName = Console.ReadLine();
+            string playerName;
+            
+            for (int i = 0; i < numberOfPlayers; i++)
+            {
+                Console.Write("#{0} player name: ", i+1);
+                playerName = Console.ReadLine();
 
-            Console.Write("Second player name: ");
-            string playerTwoName = Console.ReadLine();
-
-            Players = new Player[2] {
-                new Player
-                    {
-                        Map = new TileMap(Size),
-                        Name = playerOneName
-                    },
-                new Player
-                    {
-                        Map = new TileMap(Size),
-                        Name = playerTwoName
-                    }
-                };
-
+                Players[i] = new Player();
+                Players[i].Name = playerName;
+            }
             Console.Clear();
         }
         //
@@ -87,6 +91,10 @@ namespace Battleship
                 {
                     Size = getMapSizeFromInput(readKey);
                     Console.Clear();
+                    foreach (var player in Players)
+                    {
+                        player.Map = new TileMap(Size);
+                    }
                     return;
                 }
                 Console.WriteLine("You didn't choose any option");
@@ -324,31 +332,60 @@ namespace Battleship
         //
         private void playGamePhase()
         {
-            while (!Players.Any(player => player.Map.AreAllShipsSunk()))
+            while (Players.Count(player => player.Map.AreAllShipsSunk()) < Players.Length-1)
             {
                 for (int i = 0; i < Players.Length; i++)
                 {
-                    pickTarget(i);
+                    int enemyPlayerIndex = pickEnemyPlayer(i);
+                    pickTarget(i, enemyPlayerIndex);
                 }
+            }
+        }
+        private int pickEnemyPlayer(int playerIndex)
+        {
+            List<int> accebtableList = new List<int>();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(Players[playerIndex].Name);
+            Console.ResetColor();
+            Console.WriteLine("'s turn");
+            Console.WriteLine("Pick your enemy:");
+            for (int i = 0; i < Players.Length; i++)
+            {
+                if (i != playerIndex)
+                {
+                    Console.WriteLine("{0} - {1}", i+1, Players[i].Name);
+                    accebtableList.Add(i+1);
+                }
+            }
+
+            while (true)
+            {
+                var input = Console.ReadKey();
+                int index;
+                string inputString = input.KeyChar.ToString();
+                bool success = int.TryParse(inputString, out index);
+
+                if (success)
+                {
+                    if (accebtableList.Contains(index))
+                    {
+                        Console.Clear();
+                        return index-1;
+                    }
+                }
+                
+                Console.WriteLine("You didn't pick a number");
             }
         }
         //
         // Souhrn:
         //  Hráč si vybírá políčko, na které zaútočí.
         //
-        private void pickTarget(int PlayerIndex)
+        private void pickTarget(int PlayerIndexOne, int PlayerIndexTwo)
         {
-            Player player = Players[PlayerIndex];
-            TileMap enemyMap;
-
-            if (PlayerIndex == 1)
-            {
-                enemyMap = Players[0].Map;
-            }
-            else
-            {
-                enemyMap = Players[1].Map;
-            }
+            Player player = Players[PlayerIndexOne];
+            TileMap enemyMap = Players[PlayerIndexTwo].Map;
 
             List<ConsoleKey> acceptable = new List<ConsoleKey>();
             acceptable.Add(ConsoleKey.RightArrow);
@@ -365,7 +402,15 @@ namespace Battleship
             bool hit;
             while (true)
             {
-                Console.WriteLine("{0}'s turn to pick a target tile.", player.Name);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(player.Name);
+                Console.ResetColor();
+                Console.Write("'s turn to attack ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write(Players[PlayerIndexTwo].Name);
+                Console.ResetColor();
+                Console.WriteLine();
+
                 enemyMap.DisplayMap(target);
 
                 if (message != String.Empty)
@@ -462,9 +507,15 @@ namespace Battleship
         private void endGamePhase()
         {
             Console.Write("Game result: ");
-            bool playerOneResult = Players[0].Map.AreAllShipsSunk();
-            bool playerTwoResult = Players[1].Map.AreAllShipsSunk();
-            Player winner = (playerOneResult && playerTwoResult) ? null : (playerOneResult) ? Players[1] : Players[0];
+            Player winner;
+            if (Players.All(player => player.Map.AreAllShipsSunk()))
+            {
+                winner = null;
+            }
+            else
+            {
+                winner = Players.First(player => player.Map.AreAllShipsSunk());
+            }
 
             if (winner == null)
             {

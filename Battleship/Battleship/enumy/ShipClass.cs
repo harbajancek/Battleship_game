@@ -9,11 +9,12 @@ namespace Battleship
     enum ShipClass
     {
         Carrier = 1,
-        Battleship = 2,
-        Cruiser = 3,
-        Submarine = 4,
-        Destroyer = 5,
-        Hydroplane = 6,
-        HeavyCruiser = 7
+        Battleship,
+        Cruiser,
+        Submarine,
+        Destroyer,
+        Hydroplane,
+        HeavyCruiser,
+        Steamboat,
     }
 }

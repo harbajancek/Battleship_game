@@ -11,12 +11,15 @@ namespace Battleship
         private Player[] Players;
         private MapSize Size;
         private List<ShipClass> pickedShipClasses = new List<ShipClass>();
+        private int numberOfPlayers;
 
         public void StartGame()
         {
-            pickSizePhase();
+            pickNumberOfPlayers();
 
             pickPlayerName();
+
+            pickSizePhase();
 
             pickShipClassses();
 
@@ -26,7 +29,39 @@ namespace Battleship
 
             endGamePhase();
         }
+        private void pickNumberOfPlayers()
+        {
+            Console.WriteLine("Pick number of players");
+            var input = Console.ReadLine();
+            int.TryParse();
+        }
+        //
+        // Souhrn:
+        //  Hráči si vybírají své jména.
+        //
+        private void pickPlayerName()
+        {
+            Console.Write("First player name: ");
+            string playerOneName = Console.ReadLine();
 
+            Console.Write("Second player name: ");
+            string playerTwoName = Console.ReadLine();
+
+            Players = new Player[2] {
+                new Player
+                    {
+                        Map = new TileMap(Size),
+                        Name = playerOneName
+                    },
+                new Player
+                    {
+                        Map = new TileMap(Size),
+                        Name = playerTwoName
+                    }
+                };
+
+            Console.Clear();
+        }
         //
         // Souhrn:
         //  Určuje výšku a šířku hracího pole.
@@ -56,33 +91,6 @@ namespace Battleship
                 }
                 Console.WriteLine("You didn't choose any option");
             }
-        }
-        //
-        // Souhrn:
-        //  Hráči si vybírají své jména.
-        //
-        private void pickPlayerName()
-        {
-            Console.Write("First player name: ");
-            string playerOneName = Console.ReadLine();
-
-            Console.Write("Second player name: ");
-            string playerTwoName = Console.ReadLine();
-
-            Players = new Player[2] {
-                new Player
-                    {
-                        Map = new TileMap(Size),
-                        Name = playerOneName
-                    },
-                new Player
-                    {
-                        Map = new TileMap(Size),
-                        Name = playerTwoName
-                    }
-                };
-
-            Console.Clear();
         }
         //
         // Souhrn:

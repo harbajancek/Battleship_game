@@ -35,12 +35,51 @@ namespace Battleship
                 case ShipClass.HeavyCruiser:
                     getPointsForHC(pointList, ship, point);
                     break;
+                case ShipClass.Steamboat:
+                    getPointsForSteamboat(pointList, ship, point);
+                    break;
                 default:
                     break;
             }
             return pointList;
         }
+        private static void getPointsForSteamboat(List<Point> pointList, Ship ship, Point point)
+        {
+            pointList.Add(point);
+            if (ship.Direction == ShipDirection.West)
+            {
+                addPoints(pointList, ShipDirection.North, point, 5);
+            }
+            else
+            {
+                addPoints(pointList, ship.Direction+1, point, 5);
+            }
+            
+            Point tempPoint;
+            tempPoint = getNeighborPointByDirection(point, ship.Direction);
 
+            switch (ship.Direction)
+            {
+                case ShipDirection.North:
+                    pointList.Add(getNeighborPointByDirection(tempPoint, ShipDirection.West));
+                    pointList.Add(getNeighborPointByDirection(tempPoint, ShipDirection.East));
+                    break;
+                case ShipDirection.East:
+                    pointList.Add(getNeighborPointByDirection(tempPoint, ShipDirection.North));
+                    pointList.Add(getNeighborPointByDirection(tempPoint, ShipDirection.South));
+                    break;
+                case ShipDirection.South:
+                    pointList.Add(getNeighborPointByDirection(tempPoint, ShipDirection.West));
+                    pointList.Add(getNeighborPointByDirection(tempPoint, ShipDirection.East));
+                    break;
+                case ShipDirection.West:
+                    pointList.Add(getNeighborPointByDirection(tempPoint, ShipDirection.North));
+                    pointList.Add(getNeighborPointByDirection(tempPoint, ShipDirection.South));
+                    break;
+                default:
+                    break;
+            }
+        }
         private static void getPointsForHC(List<Point> pointList, Ship ship, Point point)
         {
             pointList.Add(point);
@@ -110,12 +149,12 @@ namespace Battleship
         private static void setPointsByLength(List<Point> pointList, Ship ship, Point point, int length)
         {
             pointList.Add(point);
-            addPoints(pointList, ship, point, length);
+            addPoints(pointList, ship.Direction, point, length);
         }
 
-        private static void addPoints(List<Point> pointList, Ship ship, Point point, int length)
+        private static void addPoints(List<Point> pointList, ShipDirection direction, Point point, int length)
         {
-            switch (ship.Direction)
+            switch (direction)
             {
                 case ShipDirection.North:
                     for (int i = 1; i < length; i++)
